@@ -22,19 +22,3 @@
     ./bin/cifrar data/texto_plano.txt data/texto.bin 8675309
     ./bin/bruteforce_seq data/texto.bin "sudo make me a sandwich" 2^24
     scripts/medir_secuencial.sh data/texto.bin "sudo make me a sandwich" 2^24 10
-
-## Codigo base de la clase (bruteforce.c)
-Copiar el archivo de la catedra a `base/bruteforce.c` y correr `make base`. El shim `compat/rpc/des_crypt.h`
-reemplaza `<rpc/des_crypt.h>` sin editar el codigo (requiere `mpicc`/OpenMPI). `make test` verifica que
-`data/texto_base.bin` es el cifrado que produce el codigo base. Con este binario se toman las "mediciones sobre codigo base".
-
-## Datos para el foro de Canvas
-- Palabra clave: `sudo make me a sandwich`
-- Archivo: `data/texto.bin` (derivacion corregida) o `data/texto_base.bin` (derivacion del codigo base). Publiquen el que
-  corresponda a la derivacion que use el bruteforce.c de la clase (ver nota en docs/informe_persona1.md, seccion 4).
-- Llave (NO publicar): 8675309
-
-## Para Persona 2 y 3
-Reutilicen `probar_llave` en el loop paralelo y mantengan el formato CSV de `bruteforce_seq`
-(`archivo;limite;llave;iteraciones;tiempo_s`) para que la bitacora de Persona 3 sea uniforme.
-Todos deben compilar con la MISMA opcion `DERIVACION` para que los resultados sean comparables.
