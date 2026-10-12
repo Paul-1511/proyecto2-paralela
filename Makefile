@@ -27,3 +27,12 @@ test: | bin
 	$(CC) -w -Icompat tests/test_shim_base.c -o bin/test_shim_base $(LDLIBS) && ./bin/test_shim_base
 
 .PHONY: all clean base test
+
+# MPI opcional: `make mpi` requiere OpenMPI (mpicc y mpirun).
+MPICC ?= mpicc
+mpi: bin/bruteforce_mpi
+
+bin/bruteforce_mpi: src/bruteforce_mpi.c $(COMUN) | bin
+	$(MPICC) $(CFLAGS) $< $(COMUN) -o $@ $(LDLIBS)
+
+.PHONY: mpi
