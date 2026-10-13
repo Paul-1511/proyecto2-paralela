@@ -20,7 +20,7 @@ clean:
 
 # Compila el bruteforce.c base de la clase (colocarlo en base/bruteforce.c) con el shim de rpc/des_crypt.h
 base: base/bruteforce.c | bin
-	mpicc -O2 -Icompat base/bruteforce.c -o bin/bruteforce_base $(LDLIBS)
+	mpicc -O2 -Wno-deprecated-declarations -Icompat base/bruteforce.c -o bin/bruteforce_base $(LDLIBS)
 
 # Verifica que texto_base.bin coincide con la derivacion de llave del codigo base
 test: | bin
