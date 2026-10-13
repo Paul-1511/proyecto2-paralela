@@ -65,3 +65,23 @@ El script `scripts/medir_paralelo.sh` genera `resultados/paralelo.csv`. Ejecutar
 - El texto de salida se muestra como cadena C, de acuerdo con el programa secuencial; el archivo cifrado debe proceder del cifrador del proyecto.
 - La derivacion `DERIVACION=base` depende de comportamiento historico no portable del codigo de la catedra. Para intercambio entre Linux, WSL y macOS usar por defecto la derivacion corregida, identica en secuencial, cifrador y MPI.
 - Los archivos del grupo y las llaves usadas en experimentos deben coincidir con la misma derivacion.
+
+## Resultados experimentales aportados por el equipo (12 de octubre de 2026)
+
+Se realizaron 10 repeticiones por configuracion para el archivo original (limite 2^24) y para tres archivos de 130 palabras cifrados con llaves 131072, 524288 y 917504 (limite 2^20). Los siguientes valores son promedios de tiempos en segundos comunicados por el integrante que ejecuto las pruebas en WSL. El entorno de elaboracion de este documento no dispone de OpenMPI para repetirlos de manera independiente.
+
+| Llave | Secuencial | Bloques P=2 | Bloques P=4 | Bloques P=6 | Ciclica P=2 | Ciclica P=4 | Ciclica P=6 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 131072 | 0.902551 | 1.092629 | 1.161915 | 1.271410 | 0.685458 | 0.335792 | 0.186246 |
+| 524288 | 3.458601 | 0.001762 | 0.002848 | 1.394744 | 1.815569 | 0.937304 | 0.692590 |
+| 917504 | 6.193471 | 2.693856 | 0.913540 | 0.351700 | 3.392926 | 1.791101 | 1.216907 |
+
+Para la llave 524288, el modo por bloques con P=2 comienza a buscar justo en esa llave en el proceso 1: el speedup extremadamente alto es aparente, producto de la posicion de la solucion, no de una aceleracion proporcional del hardware. En los tres casos, el tiempo ciclico disminuye al aumentar P, pero no es siempre menor que el tiempo por bloques. Las conclusiones sobre consistencia requieren comparar varias llaves, no solo repetir una llave.
+
+### Validacion defensiva pendiente de ejecutar en OpenMPI
+
+El script `scripts/probar_mpi_defensivo.sh` genera un texto de prueba temporal y comprueba que el codigo MPI devuelve el resultado esperado con 1, 2 y 4 procesos para ambas distribuciones, con llave encontrada y no encontrada. Comprueba tambien archivo inexistente, palabra vacia, modo y limite invalidos. Cada invocacion tiene un tiempo maximo de 30 segundos para detectar bloqueos. Ejecutar con `bash scripts/probar_mpi_defensivo.sh` en Linux o WSL; en macOS instalar GNU coreutils para disponer de `timeout` (o adaptar el script a `gtimeout`). Conservar la salida de estas pruebas como evidencia; no se afirma aqui que hayan pasado.
+
+### Correccion de la bitacora
+
+`medir_paralelo.sh` ahora calcula promedio y desviacion sobre las repeticiones de su propia invocacion, en lugar de agrupar todos los registros historicos con el mismo numero de procesos y modo. El archivo `resultados/paralelo.csv` sigue siendo acumulativo, y los registros anteriores no se borran.
