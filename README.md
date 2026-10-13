@@ -1,4 +1,4 @@
-# Proyecto 2 - MPI (CC3069) - Parte Persona 1: DES y version secuencial
+# Proyecto 2 - MPI (CC3069): DES y version secuencial
 
 ## Estructura
     src/des_compat.[ch]     reemplazo de rpc/des_crypt.h (OpenSSL)
