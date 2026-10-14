@@ -62,3 +62,29 @@ bash scripts/probar_mpi_defensivo.sh
 ```
 
 El resumen del script de medicion corresponde **solo a la serie actual**, sin mezclar archivos, llaves ni series historicas. Los datos crudos se siguen anexando a `resultados/paralelo.csv`; para escribir en otro CSV, usar `CSV_RESULTADOS=resultados/otro.csv bash scripts/medir_paralelo.sh ...`. El script defensivo utiliza `timeout` (GNU coreutils): disponible normalmente en Linux y WSL; en macOS se puede instalar `coreutils` y adaptar `timeout` por `gtimeout`. Requiere `mpirun` y un binario MPI compilado. Estas pruebas se deben ejecutar en el equipo del estudiante para verificar comunicacion real.
+
+## rendimiento y pruebas experimentales
+
+(OpenMPI 5.0.11, L = 2^24, 10 reps por serie).
+Llaves propias sobre `texto_plano.txt` (frase "sudo make me a sandwich"):
+`facil.bin` (8388609), `media.bin` (10485760), `dificil.bin` (3687301).
+Externos: `texto6.bin`, `texto7.bin` (llave 3412587), `textoequipo10.bin`
+(llave 27124); `texto6.bin` no esta en [0, 2^24). Defensivas: 16/16 OK.
+
+```bash
+for P in 2 4 6; do
+  for M in bloques ciclica; do
+    bash scripts/medir_paralelo.sh data/facil.bin "sudo make me a sandwich" 2^24 $P $M 10
+  done
+done
+# repetir con media.bin, dificil.bin, texto7.bin ("se le olvida como manejar") y textoequipo10.bin ("calabaza")
+```
+
+Resultados cíclica (S = Tseq/Tpar, E = S/P): fácil S(4)=3.677/E=91.9%,
+media S(4)=3.633/E=90.8%, difícil S(4)=3.679/E=92.0%,
+texto7 S(4)=3.649/E=91.2%, equipo10 S(4)=3.768/E=94.2%.
+Velocidad secuencial ~185 000 llaves/s. Bloques es inconsistente por
+posición de la llave (fácil ~0.002 s, speedup aparente ~15 000-30 000x;
+difícil sin speedup hasta P=6); cíclica escala estable
+(E ≈ 0.95/0.91/0.85 con P=2/4/6). Tablas y análisis en `proyecto2.pdf`
+(sección 8 y anexos); gráficas en `resultados/grafica_*_vs_P.png`.
